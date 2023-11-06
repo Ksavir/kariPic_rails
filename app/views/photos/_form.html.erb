@@ -1,0 +1,7 @@
+<p class="alert"><%= alert %></p>
+<%= simple_form_for @photo do |f| %>
+  <%= f.input :title, placeholder: "Titulo de la foto", required: true, minlength: 2, maxlength: 100 %>
+  <%= f.input :image, as: :file, input_html: { accept: 'image/*' }, required: true %>
+  <%= f.input :description, placeholder: "Expresa que sentiste", required: true, minlength: 2, maxlength: 1000 %>
+  <%= f.button :submit, class: "btn btn-primary" %>
+<% end %>

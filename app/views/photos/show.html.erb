@@ -1,0 +1,53 @@
+<p style="color: green"><%= notice %></p>
+
+<!-- Fotos -->
+
+<div class="pb-2 my-4 rounded-3 overflow-hidden bg-card shadow">
+  <%= render @photo %>
+  <div class="d-flex gap-4 ps-2">
+    <%= link_to "Back to photos", photos_path %>
+    <%if user_signed_in? && current_user.admin?%>
+      <%= link_to "Edit this photo", edit_photo_path(@photo) %>
+      <%= button_to "Destroy this photo", @photo, class: "btn btn-sm btn-outline-danger", method: :delete %>
+    <% end %>
+  </div>
+</div>
+
+<!-- Comentarios -->
+
+<% @photo.comments.each do |comment| %>
+  <div class="mt-4 border p-2 bg-card shadow-sm rounded-2">
+    <div class="d-flex gap-2 align-items-center">
+      <div class="profileWraper">
+        <%= image_tag comment.user.profile_picture, class: "w-100 rounded-5" if comment.user.profile_picture.attached? %>
+      </div>
+      <p class="m-0"><%= comment.user.name %>:</p>
+    </div>
+    <div class="my-2">
+      <%= simple_format(comment.body) %>
+    </div>
+    <!-- BOTONES DE BORRAR Y EDITAR COMENTARIOS -->
+    <% if user_signed_in? && (current_user.admin? || current_user == comment.user) %>
+      <div class="d-flex gap-3">
+        <%= link_to "Editar", edit_photo_comment_path(@photo, comment), class: "btn btn-outline-primary btn-sm" %>
+        <%= button_to "Eliminar", [comment.photo, comment], method: :delete, data: { confirm: "¿Estás seguro?" }, class: "btn btn-outline-danger btn-sm" %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<!-- Nuevo Comentarios -->
+
+<% if user_signed_in? %>
+  <p class="mt-5">Agregar Comentario</p>
+  <%= form_with(model: [@photo, Comment.new], local: true, html: {class: "d-flex flex-column"}) do |form| %>
+    <%= form.text_area :body, placeholder: "Deja un comentario...", rows: 5, required: true, maxlength: 500, class: "p-2" %>
+    <div class="mt-2 mb-5">
+      <%= form.submit "Comentar", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+<% else %>
+  <div class="mt-4">
+    <p>Inicia sesión para dejar un comentario.</p>
+  </div>
+<% end %>
